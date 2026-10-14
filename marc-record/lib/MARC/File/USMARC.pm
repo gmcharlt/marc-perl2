@@ -237,11 +237,7 @@ sub decode {
                 next;
             }
 
-            my $field = MARC::Field->_unsafe_new_variable_field($tagno, $ind1, $ind2, @subfield_data );
-            if ( $field->warnings() ) {
-                $marc->_warn( $field->warnings() );
-            }
-            $marc->_unsafe_append_fields( $field );
+            $marc->_unsafe_append_fields( MARC::Field->_unsafe_new_variable_field($tagno, $ind1, $ind2, @subfield_data ) );
         }
     } # looping through all the fields
 
