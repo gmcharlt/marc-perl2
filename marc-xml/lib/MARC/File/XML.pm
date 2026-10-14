@@ -474,22 +474,37 @@ sub decode {
     my @fields = ();
     foreach my $elt ($root->getChildrenByLocalName('*')) {
         if ($elt->localname eq 'controlfield') {
-            push @fields, MARC::Field->new($elt->getAttribute('tag'), $elt->textContent);
+            push @fields, MARC::Field->_unsafe_new_control_field($elt->getAttribute('tag'), $elt->textContent);
         } elsif ($elt->localname eq 'datafield') {
+            my $tagno = $elt->getAttribute('tag');
             my @sfs = ();
             foreach my $sfelt ($elt->getChildrenByLocalName('subfield')) {
-                push @sfs, $sfelt->getAttribute('code'), 
-                           $transcode_to_marc8 ? utf8_to_marc8($sfelt->textContent()) : $sfelt->textContent();
+                my $sfvalue = $transcode_to_marc8 ? utf8_to_marc8($sfelt->textContent()) : $sfelt->textContent();
+                if (length($sfvalue) > 0) {
+                    push @sfs, [ $sfelt->getAttribute('code'), $sfvalue ];
+                } else {
+                    $rec->_warn( "Entirely empty subfield found in tag $tagno" );
+                }
             }
-            push @fields, MARC::Field->new(
-                $elt->getAttribute('tag'),
-                $elt->getAttribute('ind1'),
-                $elt->getAttribute('ind2'),
+            my $ind1 = $elt->getAttribute('ind1');
+            my $ind2 = $elt->getAttribute('ind2');
+            unless ($ind1 =~ /^[0-9A-Za-z ]$/) {
+                $rec->_warn( "Invalid indicator \"$ind1\" forced to blank" );
+                $ind1 = ' ';
+            }
+            unless ($ind2 =~ /^[0-9A-Za-z ]$/) {
+                $rec->_warn( "Invalid indicator \"$ind2\" forced to blank" );
+                $ind2 = ' ';
+            }
+            push @fields, MARC::Field->_unsafe_new_variable_field(
+                $tagno,
+                $ind1,
+                $ind2,
                 @sfs
             );
         }
     }
-    $rec->append_fields(@fields);
+    $rec->_unsafe_append_fields(@fields);
     return $rec;
    
 }
