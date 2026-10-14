@@ -19,9 +19,14 @@ hit of some kind.
 use strict;
 use warnings;
 use base qw( Exporter );
-use Encode;
+use Encode qw( );
 
 our @EXPORT_OK = qw( marc_to_utf8 );
+
+# Grab the right encoder first; this approach gives a meaningful
+# performance improvement over having marc_to_utf8()
+# call Encode::decode();
+our $encoder = Encode::find_encoding('UTF8');
 
 =head2 marc_to_utf8()
 
@@ -32,7 +37,7 @@ Simple wrapper around Encode::decode().
 sub marc_to_utf8 {
     # if there is invalid utf8 date then this will through an exception
     # let's just hope it's valid :-)
-    return decode( 'UTF-8', $_[0], 1 );
+    return $encoder->decode($_[0], 1);
 }
 
 1;
