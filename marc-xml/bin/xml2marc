@@ -23,7 +23,8 @@ the MARC::Record and MARC::File::XML packages.
 use strict;
 use warnings;
 use MARC::Batch;
-use MARC::File::XML;
+#use MARC::File::XML;
+use MARC::File::XML (BinaryEncoding => 'UTF-8');
 
 my $file = shift;
 my $fh;
@@ -40,7 +41,7 @@ else {
 }
 
 ## set up intput/output for utf8 encoding
-binmode( STDOUT, ':bytes' );
+binmode( STDOUT, ':utf8' );
 binmode( $fh, ':utf8' );
 
 my $batch = MARC::Batch->new( 'XML', $fh );
