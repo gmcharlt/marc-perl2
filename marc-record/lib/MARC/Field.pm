@@ -107,7 +107,7 @@ sub new {
             or croak( "Field $tagno must have at least one subfield" );
 
         # Normally, we go thru add_subfields(), but internally we can cheat
-        $self->{_subfields} = [ splice(@_, 0, 2) ]; # TODO add check for wrong number of subfields
+        @{ $self->{_subfields} } = map { [ $_[$_ * 2], $_[$_ * 2 + 1] ] }  (0..$#_/2); # TODO add check for wrong number of subfields
     }
 
     return $self;
@@ -402,7 +402,7 @@ sub add_subfields {
     croak( "Subfields are only for data fields (generally, just tags >= 010)" )
         if $self->{_is_control_field};
 
-    push( @{$self->{_subfields}}, map { [ $_->key => $_->value ] } splice( @_, 0, 2 ) ); # TODO fix return; check for uneven number of params
+    push( @{$self->{_subfields}}, map { [ $_[$_ * 2], $_[$_ * 2 + 1] ] } (0..$#_/2) ); # TODO check for uneven number of params
     return @_/2;
 }
 
