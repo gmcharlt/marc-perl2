@@ -114,36 +114,29 @@ sub new {
 } # new()
 
 sub _unsafe_new_control_field {
-    my $class = shift;
 
-    my $self = bless {
-        _tag => shift,
+    return bless {
+        _tag => $_[1],
         _warnings => [],
         _is_control_field => 1,
-    }, $class;
-    $self->{_data} = shift;
+        _data => $_[2],
+    }, $_[0];
 
-    return $self;
 } # new()
 
 # NOTE: this expects the subfield list as an array
 # of arrayrefs, not just an array like ->new() does
 sub _unsafe_new_variable_field {
-    my $class = shift;
 
-    my $self = bless {
-        _tag => shift,
+    return bless {
+        _tag => $_[1],
+        _ind1 => $_[2],
+        _ind2 => $_[3],
         _warnings => [],
         _is_control_field => 0,
-    }, $class;
+        _subfields => [  @_[4 .. $#_] ]
+    }, $_[0];
 
-    $self->{_ind1} = shift;
-    $self->{_ind2} = shift;
-
-    # Normally, we go thru add_subfields(), but internally we can cheat
-    $self->{_subfields} = [ @_ ];
-
-    return $self;
 } # new()
 
 =head2 tag()
