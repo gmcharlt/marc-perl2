@@ -665,20 +665,20 @@ Returns a pretty string for printing in a MARC dump.
 sub as_formatted {
     my $self = shift;
 
-    my @lines;
+    my $result = '';
 
     if ( $self->{_is_control_field} ) {
-        push( @lines, $self->{_tag} . '     ' . $self->{_data} );
+        $result .= $self->{_tag} . '     ' . $self->{_data};
     } else {
         my $hanger = $self->{_tag} . ' ' . $self->{_ind1} . $self->{_ind2};
 
         for my $sf (@{ $self->{_subfields} }) {
-            push( @lines, $hanger . ' _' . $sf->[0] . $sf->[1] );
-            $hanger = '      ';
+            $result .= $hanger . ' _' . $sf->[0] . $sf->[1];
+            $hanger = "\n      ";
         } # for
     }
 
-    return join( "\n", @lines );
+    return $result;
 }
 
 
