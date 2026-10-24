@@ -177,6 +177,7 @@ sub decode {
 
     # go through all the fields
     my $nfields = length($dir)/DIRECTORY_ENTRY_LEN;
+    my @fields = ();
     for ( my $n = 0; $n < $nfields; $n++ ) {
         my $direntry = substr($dir, $n*DIRECTORY_ENTRY_LEN, DIRECTORY_ENTRY_LEN);
         my ( $tagno, $len, $offset ) = unpack( "A3 A4 A5", $direntry );
@@ -224,7 +225,7 @@ sub decode {
         }
 
         if ( $tagno =~ /^00\d$/ || exists $MARC::Field::extra_control_fields_tags{$tagno} ) {
-            $marc->_unsafe_append_fields( MARC::Field->_unsafe_new_control_field( $tagno, $tagdata ) );
+            push @fields, MARC::Field->_unsafe_new_control_field( $tagno, $tagdata );
         } else {
             my @subfields = split( SUBFIELD_INDICATOR, $tagdata );
             my $indicators = shift @subfields;
@@ -262,10 +263,11 @@ sub decode {
                 next;
             }
 
-            $marc->_unsafe_append_fields( MARC::Field->_unsafe_new_variable_field($tagno, $ind1, $ind2, @subfield_data ) );
+            push @fields, MARC::Field->_unsafe_new_variable_field($tagno, $ind1, $ind2, @subfield_data );
         }
     } # looping through all the fields
 
+    $marc->_unsafe_append_fields( @fields );
 
     return $marc;
 }
