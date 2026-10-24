@@ -180,7 +180,7 @@ sub decode {
     my @fields = ();
     for ( my $n = 0; $n < $nfields; $n++ ) {
         my $direntry = substr($dir, $n*DIRECTORY_ENTRY_LEN, DIRECTORY_ENTRY_LEN);
-        my ( $tagno, $len, $offset ) = unpack( "A3 A4 A5", $direntry );
+        my ( $tagno, $len, $offset ) = ( substr($direntry, 0, 3), substr($direntry, 3, 4), substr($direntry, 7, 5) );
 
         # Check directory validity. We check the overall entry first so
         # that valid ones require only one regexp match rather than three.
