@@ -568,10 +568,11 @@ Returns a pretty string for printing in a MARC dump.
 sub as_formatted {
     my $self = shift;
 
-    return join( "\n",
-        "LDR " . ($self->{_leader} || ""),
-        map { $_->as_formatted() } @{$self->{_fields}}
-    );
+    my $result = 'LDR ' . ($self->{_leader} || '');
+    foreach (@{ $self->{_fields } }) {
+        $result .= "\n" . $_->as_formatted();
+    }
+    return $result;
 } # as_formatted
 
 
