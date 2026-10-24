@@ -224,7 +224,8 @@ sub decode {
             next unless $filter_func->( $tagno, $tagdata );
         }
 
-        if ( $tagno =~ /^00\d$/ || exists $MARC::Field::extra_control_fields_tags{$tagno} ) {
+        if ( (  ( substr($tagno, 0, 2) eq '00' ) && ( 1 == substr($tagno, 2, 1) =~ tr/0-9// ) ) ||
+             exists $MARC::Field::extra_control_fields_tags{$tagno} ) {
             push @fields, MARC::Field->_unsafe_new_control_field( $tagno, $tagdata );
         } else {
             my @subfields = split( SUBFIELD_INDICATOR, $tagdata );
