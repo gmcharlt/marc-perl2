@@ -668,13 +668,13 @@ sub as_formatted {
     my @lines;
 
     if ( $self->{_is_control_field} ) {
-        push( @lines, sprintf( "%03s     %s", $self->{_tag}, $self->{_data} ) );
+        push( @lines, $self->{_tag} . '     ' . $self->{_data} );
     } else {
-        my $hanger = sprintf( "%03s %1.1s%1.1s", $self->{_tag}, $self->{_ind1}, $self->{_ind2} );
+        my $hanger = $self->{_tag} . ' ' . $self->{_ind1} . $self->{_ind2};
 
         for my $sf (@{ $self->{_subfields} }) {
-            push( @lines, sprintf( "%-6.6s _%1.1s%s", $hanger, $sf->[0], $sf->[1] ) );
-            $hanger = "";
+            push( @lines, $hanger . ' _' . $sf->[0] . $sf->[1] );
+            $hanger = '      ';
         } # for
     }
 
