@@ -231,7 +231,7 @@ sub decode {
             my $indicators = shift @subfields;
             my ($ind1, $ind2);
 
-            if ( length( $indicators ) > 2 or length( $indicators ) == 0 ) {
+            if ( length( $indicators ) != 2 ) {
                 $problem->( "Invalid indicators \"$indicators\" forced to blanks $location for tag $tagno\n" );
                 ($ind1,$ind2) = (" ", " ");
             } else {
