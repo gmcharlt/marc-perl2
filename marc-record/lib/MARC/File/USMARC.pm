@@ -227,7 +227,12 @@ sub decode {
 
         if ( (  ( substr($tagno, 0, 2) eq '00' ) && ( 1 == substr($tagno, 2, 1) =~ tr/0-9// ) ) ||
              exists $MARC::Field::extra_control_fields_tags{$tagno} ) {
-            push @fields, MARC::Field->_unsafe_new_control_field( $tagno, $tagdata );
+            push @fields, bless {
+                _tag => $tagno,
+                _warnings => [],
+                _is_control_field => 1,
+                _data => $tagdata,
+            }, 'MARC::Field';
         } else {
             my @subfields = split( SUBFIELD_INDICATOR, $tagdata );
             my $indicators = shift @subfields;
@@ -265,7 +270,14 @@ sub decode {
                 next;
             }
 
-            push @fields, MARC::Field->_unsafe_new_variable_field($tagno, $ind1, $ind2, @subfield_data );
+            push @fields, bless {
+                _tag => $tagno,
+                _ind1 => $ind1,
+                _ind2 => $ind2,
+                _warnings => [],
+                _is_control_field => 0,
+                _subfields => [  @subfield_data ]
+            }, 'MARC::Field';
         }
     } # looping through all the fields
 
