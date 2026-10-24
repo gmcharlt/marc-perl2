@@ -184,7 +184,8 @@ sub decode {
 
         # Check directory validity. We check the overall entry first so
         # that valid ones require only one regexp match rather than three.
-        if ($direntry !~ /^[0-9A-Za-z]{3}\d{9}$/) {
+        if ( ( 3 != substr( $direntry, 0, 3 ) =~ tr/0-9A-Za-z// ) ||
+             ( 9 != substr( $direntry, 3, 9 ) =~ tr/0-9// ) ) {
             ($tagno =~ /^[0-9A-Za-z]{3}$/)
                 or $problem->( "Invalid tag in directory $location: \"$tagno\"" );
 
