@@ -569,8 +569,18 @@ sub as_formatted {
     my $self = shift;
 
     my $result = 'LDR ' . ($self->{_leader} || '');
-    foreach (@{ $self->{_fields } }) {
-        $result .= "\n" . $_->as_formatted();
+    foreach my $field (@{ $self->{_fields } }) {
+        $result .= "\n";
+        if ( $field->{_is_control_field} ) {
+            $result .= $field->{_tag} . '     ' . $field->{_data};
+        } else {
+            my $hanger = $field->{_tag} . ' ' . $field->{_ind1} . $field->{_ind2};
+
+            for my $sf (@{ $field->{_subfields} }) {
+                $result .= $hanger . ' _' . $sf->[0] . $sf->[1];
+                $hanger = "\n      ";
+            } # for
+        }
     }
     return $result;
 } # as_formatted
