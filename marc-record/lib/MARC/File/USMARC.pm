@@ -239,11 +239,11 @@ sub decode {
                 $ind2 = substr( $indicators,1, 1 );
             }
 
-            unless ($ind1 =~ /^[0-9A-Za-z ]$/) {
+            if (1 != $ind1 =~ tr/[0-9A-Za-z ]//) {
                 $marc->_warn( "Invalid indicator \"$ind1\" forced to blank" );
                 $ind1 = ' ';
             }
-            unless ($ind2 =~ /^[0-9A-Za-z ]$/) {
+            if (1 != $ind2 =~ tr/[0-9A-Za-z ]//) {
                 $marc->_warn( "Invalid indicator \"$ind2\" forced to blank" );
                 $ind2 = ' ';
             }
